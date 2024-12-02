@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise Website</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+      }
+      .container h2 {
+        margin-bottom: 20px;
+      }
+      .container input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .container button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .container button:hover {
+        background-color: #0056b3;
+      }
+      .toggle-form {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .toggle-form a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .toggle-form a:hover {
+        text-decoration: underline;
+      }
+      .exercise-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .exercise-container h2 {
+        margin-bottom: 20px;
+      }
+      .exercise-container button {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="signup-form">
+      <h2>Sign Up</h2>
+      <input type="text" id="signup-username" placeholder="Username" />
+      <input type="email" id="signup-email" placeholder="Email" />
+      <input type="password" id="signup-password" placeholder="Password" />
+      <button onclick="signUp()">Sign Up</button>
+      <div class="toggle-form">
+        <p>
+          Already have an account?
+          <a href="#" onclick="showLoginForm()">Login</a>
+        </p>
+      </div>
+    </div>
+    <div class="container" id="login-form" style="display: none">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email" />
+      <input type="password" id="login-password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <div class="toggle-form">
+        <p>
+          Don't have an account?
+          <a href="#" onclick="showSignUpForm()">Sign Up</a>
+        </p>
+      </div>
+    </div>
+    <div class="container exercise-container" id="exercise-form">
+      <h2>Exercise</h2>
+      <p>What is 2 + 2?</p>
+      <input type="text" id="exercise-answer" placeholder="Your answer" />
+      <button onclick="submitExercise()">Submit</button>
+      <div id="exercise-result"></div>
+    </div>
+    <script>
+      function showLoginForm() {
+        document.getElementById("signup-form").style.display = "none";
+        document.getElementById("login-form").style.display = "block";
+        document.getElementById("exercise-form").style.display = "none";
+      }
+      function showSignUpForm() {
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("signup-form").style.display = "block";
+        document.getElementById("exercise-form").style.display = "none";
+      }
+      function signUp() {
+        const username = document.getElementById("signup-username").value;
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
+        document.cookie = `username=${username}; path=/`;
+        document.cookie = `email=${email}; path=/`;
+        document.cookie = `password=${password}; path=/`;
+        alert(
+          "Sign Up Successful!\nUsername: " + username + "\nEmail: " + email
+        );
+        showLoginForm();
+      }
+      function login() {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        const storedEmail = getCookie("email");
+        const storedPassword = getCookie("password");
+        if (email === storedEmail && password === storedPassword) {
+          alert("Login Successful!\nEmail: " + email);
+          document.getElementById("login-form").style.display = "none";
+          document.getElementById("exercise-form").style.display = "flex";
+        } else {
+          alert("Login Failed!");
+        }
+      }
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      }
+      function submitExercise() {
+        const answer = document.getElementById("exercise-answer").value;
+        const resultDiv = document.getElementById("exercise-result");
+        if (answer === "4") {
+          resultDiv.innerHTML = "Correct!";
+          resultDiv.style.color = "green";
+        } else {
+          resultDiv.innerHTML = "Incorrect!";
+          resultDiv.style.color = "red";
+          const username = getCookie("username");
+          const exerciseData = getCookie("exerciseData") || "";
+          const newData = exerciseData
+            ? exerciseData + ", " + username + ": " + answer
+            : username + ": " + answer;
+          document.cookie = `exerciseData=${newData}; path=/`;
+        }
+      }
+    </script>
+  </body>
+</html>
